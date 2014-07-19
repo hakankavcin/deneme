@@ -1,0 +1,105 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1- transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+xmlns:h="http://java.sun.com/jsf/html"
+xmlns:f="http://java.sun.com/jsf/core"
+xmlns:ui="http://java.sun.com/jsf/facelets"
+xmlns:p="http://primefaces.org/ui">
+
+ <h:head>
+<title>Musteri Islem</title>
+
+  </h:head>
+ <h:body>
+   <f:view>
+  
+
+<h:form id="musteriBilgileriForm" enctype="multipart/form-data" >
+<p:growl id="msgs" showDetail="true" />
+    
+  <p:panelGrid id="kayitPanel" columns="2">
+        <f:facet name="header">
+        <h:outputText value="Musteri Bilgileri" />
+        </f:facet>
+
+        <h:outputText value="Kullanici Adi:" />
+   <p:keyboard id="musteriAdi" value="#{musteriBean.musteriModel.musteriadi}"  required="true" requiredMessage="Adi Bos Giremezsiniz" />
+        <h:outputText value="Kullanici Soyadi" />
+        <p:keyboard id="musteriSoyadi"  value="#{musteriBean.musteriModel.musterisoyadi}" required="true" requiredMessage="Soyadi Bos Giremezsiniz"/>
+         <p:outputLabel value="Kullanici Fotografi" />
+       <p:fileUpload  fileUploadListener="#{musteriBean.upload}"
+        mode="advanced" 
+        update="messages"
+        sizeLimit="100000" 
+        allowTypes="/(\.|\/)(gif|jpe?g|png)$/"/>
+
+    <p:growl id="messages" showDetail="true" /> 
+
+        <f:facet name="footer">
+
+            <center>
+                <p:commandButton value="Kullanici Ekle" process="kayitPanel" action="#{musteriBean.musteriKaydet()}" update=":MusteriListesiForm" />
+                <p:commandButton value="Temizle" type="reset" />
+            </center>
+
+        </f:facet>          
+ </p:panelGrid>
+     
+                </h:form>
+
+
+    <h:form id="MusteriListesiForm" enctype="multipart/form-data">
+                    <p:growl id="growl" showDetail="true" sticky="true" />
+
+        <h2><center><p:outputLabel value="Musteri Listesi" /></center></h2>
+        <p:dataTable styleClass="standartDataListe"
+			id="musteriTanimlariListesi" 
+			value="#{musteriBean.musteriTanimlariListesi}"
+			var="musteritanimlari"
+			rowKey="#{musteritanimlari.id}"
+			selectionMode="single" 
+			selection="#{musteriBean.musteriModel}" 
+			paginator="true"
+			rows="10"
+			paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+			rowsPerPageTemplate="10,30,50" 
+			emptyMessage="Kayıt Bulunamadı">
+			
+			<p:ajax event="rowSelect" update=":musteriBilgileriForm" />
+
+            <p:column headerText="Musteri Adı"  sortBy="#{musteritanimlari.musteriadi}">
+                <p:outputLabel value="#{musteritanimlari.musteriadi}" />
+            </p:column>
+            <p:column headerText="Musteri Soyadı" sortBy="#{musteritanimlari.musterisoyadi}">
+                <p:outputLabel value="#{musteritanimlari.musterisoyadi}" />
+            </p:column>
+             <p:column headerText="Musteri Resim"  sortBy="#{musteritanimlari.profilresmi}">
+                <p:outputLabel value="#{musteritanimlari.profilresmi}" />
+            </p:column>
+        </p:dataTable>
+        <br />
+</h:form>
+  <center>
+ <h:form id="DialogPenceresiFormSil"> 
+   <p:growl id="messageSil" showDetail="true" />
+   <p:commandButton value="Sil" action="#{musteriBean.destroyWorld}" update="messageSil">
+   			 <p:confirm header="Uyarı" message="Sil Istediginizden Emin misiniz?" icon="ui-icon-alert" />
+   </p:commandButton>
+   
+    <p:confirmDialog global="true" showEffect="fade" hideEffect="explode">
+  			<p:commandButton process="@this"  actionListener="#{musteriBean.sil}" value="Evet"  styleClass="ui-confirmdialog-yes" icon="ui-icon-check" update=":MusteriListesiForm" />			
+			<p:commandButton value="Hayır" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+    </p:confirmDialog>
+   </h:form> 
+   <br/>
+<p:commandButton value="Guncelle" actionListener="#{musteriBean.musteriGuncelle()}" process="@this, :musteriBilgileriForm" update=":MusteriListesiForm:growl, :MusteriListesiForm"/>
+		    <p:commandButton value="Vazgec" action="IslemSec?faces-redirect=true" />
+		    
+        </center>
+     
+  
+     
+   </f:view>
+    <br/>  
+ </h:body>
+ </html>
